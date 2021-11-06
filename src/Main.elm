@@ -8,7 +8,7 @@ import String
 
 
 main =
-    Browser.sandbox { init = 0, update = update, view = view }
+    Browser.element { init = init, update = update, view = view, subscriptions = subscriptions }
 
 
 
@@ -35,8 +35,29 @@ bookmarks =
     ]
 
 
+
+-- INIT
+
+
+init : () -> ( (), Cmd () )
+init _ =
+    ( (), Cmd.none )
+
+
+
+-- UPDATE
+
+
 update _ model =
-    model
+    ( model, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions model =
+    Sub.none
 
 
 view model =
