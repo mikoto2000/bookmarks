@@ -3,6 +3,8 @@ module Main exposing (main, update, view)
 import Browser
 import Html exposing (Html, a, button, div, li, p, text, ul)
 import Html.Attributes exposing (href, id)
+import Http
+import Json.Decode exposing (Decoder, field, list, map2, string)
 import List
 import String
 
@@ -15,6 +17,10 @@ main =
 -- 型定義
 
 
+type alias Model =
+    { bookmarks : List Bookmark }
+
+
 type alias Bookmark =
     { title : String
     , url : String
@@ -22,34 +28,35 @@ type alias Bookmark =
 
 
 
--- ブックマークのリスト
+-- メッセージ定義
 
 
-bookmarks =
-    [ { title = "Google"
-      , url = "https://www.google.com"
-      }
-    , { title = "TweetDeck"
-      , url = "https://tweetdeck.twitter.com/"
-      }
-    ]
+type Msg
+    = GotBookmarks (Result Http.Error (List Bookmark))
 
 
 
 -- INIT
 
 
-init : () -> ( (), Cmd () )
+init : () -> ( Model, Cmd Msg )
 init _ =
-    ( (), Cmd.none )
+    ( Model [], getBookmarks )
 
 
 
 -- UPDATE
 
 
-update _ model =
-    ( model, Cmd.none )
+update msg model =
+    case msg of
+        GotBookmarks result ->
+            case result of
+                Ok bookmarks ->
+                    ( { model | bookmarks = bookmarks }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
 
 
@@ -65,7 +72,7 @@ view model =
         [ div []
             [ div [ id "bookmarks" ]
                 [ ul []
-                    (List.map to_anchor bookmarks)
+                    (List.map to_anchor model.bookmarks)
                 ]
             ]
         ]
@@ -74,3 +81,27 @@ view model =
 to_anchor bookmark =
     li []
         [ a [ href bookmark.url ] [ text bookmark.title ] ]
+
+
+
+-- HTTP
+
+
+getBookmarks : Cmd Msg
+getBookmarks =
+    Http.get
+        { url = "./bookmarks/mikoto2000.json"
+        , expect = Http.expectJson GotBookmarks bookmarkListDecoder
+        }
+
+
+bookmarkListDecoder : Decoder (List Bookmark)
+bookmarkListDecoder =
+    Json.Decode.list bookmarkDecoder
+
+
+bookmarkDecoder : Decoder Bookmark
+bookmarkDecoder =
+    map2 Bookmark
+        (field "title" string)
+        (field "url" string)
