@@ -1,0 +1,51 @@
+openapi: "3.0.0"
+info:
+  description: "ブックマークリストを管理するための API"
+  version: "1.0.0"
+  title: "Bookmarks"
+  contact:
+    email: "mikoto2000@gmail.com"
+  license:
+    name: "MIT"
+    url: https://opensource.org/licenses/mit-license.php
+servers:
+  - url: "https://mikoto2000.github.io/bookmarks/"
+  - url: "https://localhost:{port}/bookmarks/"
+    variables:
+      port:
+        default: "8080"
+paths:
+  /users/{user}.json:
+    get:
+      tags:
+        - bookmarks
+      summary: 対象ユーザーのすべてのブックマークを取得
+      description: ブックマークのリストを返却
+      parameters: 
+        - in: path
+          name: user
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: ブックマークのリスト
+          content:
+            application/json:
+               schema:
+                 $ref: '#/components/schemas/Bookmarks'
+components:
+  schemas:
+    Bookmarks:
+      type: array
+      items:
+        $ref: '#/components/schemas/Bookmark'
+    Bookmark:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string 
+        title:
+          type: string

@@ -90,7 +90,7 @@ to_anchor bookmark =
 getBookmarks : Cmd Msg
 getBookmarks =
     Http.get
-        { url = "./bookmarks/mikoto2000.json"
+        { url = "./users/mikoto2000.json"
         , expect = Http.expectJson GotBookmarks bookmarkListDecoder
         }
 
