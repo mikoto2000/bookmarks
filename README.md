@@ -1,10 +1,20 @@
 # Bookmarks
 
+## Start development
+
+```sh
+git clone https://github.com/mikoto2000/bookmarks.git
+cd bookmarks
+npm install
+```
+
+
 ## Build
 
 ```sh
-elm-format --yes src/Main.elm
-elm make --output=dist/bookmarks.js src/Main.elm
+npx elm-format --yes src/Main.elm
+npx elm make --output=dist/bookmarks.js src/Main.elm
+cp -r src/users ./dist
 ```
 
 ## Run application on local
@@ -12,7 +22,7 @@ elm make --output=dist/bookmarks.js src/Main.elm
 Use [http-party/http-server: a simple zero-configuration command-line http server](https://github.com/http-party/http-server).
 
 ```sh
-http-server -p 8080 ./dist
+npx http-server -p 8080 ./dist
 ```
 
 ## Edit OpenAPI
@@ -43,3 +53,4 @@ openapi2jsonschema -o ./openapi/schemas ./openapi/openapi.yaml
     - [x] : エラー通知
 - [ ] : ユーザー毎にブックマークリストファイルを作れるようにする
 - [ ] : 見た目改善
+- [ ] : テスト

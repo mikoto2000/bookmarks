@@ -1,4 +1,7 @@
+node_modules/
 elm-stuff/
+
+openapi/schemas/
 
 dist/bookmarks.js
 dist/users/
