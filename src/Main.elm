@@ -18,7 +18,7 @@ main =
 
 
 type alias Model =
-    { bookmarks : List Bookmark }
+    { bookmarks : List Bookmark, infomation : String }
 
 
 type alias Bookmark =
@@ -41,7 +41,7 @@ type Msg
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model [], getBookmarks )
+    ( Model [] infomation_loading, getBookmarks )
 
 
 
@@ -53,10 +53,24 @@ update msg model =
         GotBookmarks result ->
             case result of
                 Ok bookmarks ->
-                    ( { model | bookmarks = bookmarks }, Cmd.none )
+                    ( { model | bookmarks = bookmarks, infomation = "" }, Cmd.none )
 
-                Err _ ->
-                    ( model, Cmd.none )
+                Err error ->
+                    case error of
+                        Http.BadUrl url ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 BadUrl: " ++ url }, Cmd.none )
+
+                        Http.Timeout ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 Timeout" }, Cmd.none )
+
+                        Http.NetworkError ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 NetworkError" }, Cmd.none )
+
+                        Http.BadStatus i ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 BadStatus: " ++ String.fromInt i }, Cmd.none )
+
+                        Http.BadBody s ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 BadBody: " ++ s }, Cmd.none )
 
 
 
@@ -70,7 +84,8 @@ subscriptions model =
 view model =
     div []
         [ div []
-            [ div [ id "bookmarks" ]
+            [ div [ id "infomation" ] [ text model.infomation ]
+            , div [ id "bookmarks" ]
                 [ ul []
                     (List.map to_anchor model.bookmarks)
                 ]
@@ -105,3 +120,15 @@ bookmarkDecoder =
     map2 Bookmark
         (field "title" string)
         (field "url" string)
+
+
+
+-- ユーザー向け通知メッセージ
+
+
+infomation_loading =
+    "ロード中..."
+
+
+infomation_json_load_error =
+    "JSON の読み込みに失敗しました"
