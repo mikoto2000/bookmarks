@@ -1,9 +1,9 @@
 module Main exposing (main, update, view)
 
 import Browser
-import Html exposing (Html, a, button, div, li, p, text, ul)
+import Html exposing (Html, a, button, div, li, p, pre, text, ul)
 import Html.Attributes exposing (href, id)
-import Http
+import Http exposing (Expect, Metadata)
 import Json.Decode exposing (Decoder, field, list, map2, string)
 import List
 import String
@@ -27,12 +27,20 @@ type alias Bookmark =
     }
 
 
+type GetBookmarksResult
+    = BadUrl String
+    | Timeout
+    | NetworkError
+    | BadStatus Metadata
+    | BadContents Metadata String
+
+
 
 -- メッセージ定義
 
 
 type Msg
-    = GotBookmarks (Result Http.Error (List Bookmark))
+    = GotBookmarks (Result GetBookmarksResult (List Bookmark))
 
 
 
@@ -57,20 +65,20 @@ update msg model =
 
                 Err error ->
                     case error of
-                        Http.BadUrl url ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 BadUrl: " ++ url }, Cmd.none )
+                        BadUrl url ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nBadUrl: " ++ url }, Cmd.none )
 
-                        Http.Timeout ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 Timeout" }, Cmd.none )
+                        Timeout ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nTimeout" }, Cmd.none )
 
-                        Http.NetworkError ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 NetworkError" }, Cmd.none )
+                        NetworkError ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nNetworkError" }, Cmd.none )
 
-                        Http.BadStatus i ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 BadStatus: " ++ String.fromInt i }, Cmd.none )
+                        BadStatus metadata ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nURL: " ++ metadata.url ++ "\nStatus: " ++ String.fromInt metadata.statusCode }, Cmd.none )
 
-                        Http.BadBody s ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。 BadBody: " ++ s }, Cmd.none )
+                        BadContents metadata body ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\n" ++ body }, Cmd.none )
 
 
 
@@ -84,7 +92,7 @@ subscriptions model =
 view model =
     div []
         [ div []
-            [ div [ id "infomation" ] [ text model.infomation ]
+            [ pre [ id "infomation" ] [ text model.infomation ]
             , div [ id "bookmarks" ]
                 [ ul []
                     (List.map to_anchor model.bookmarks)
@@ -106,8 +114,34 @@ getBookmarks : Cmd Msg
 getBookmarks =
     Http.get
         { url = "./users/mikoto2000.json"
-        , expect = Http.expectJson GotBookmarks bookmarkListDecoder
+        , expect = expectBookmarksJson GotBookmarks bookmarkListDecoder
         }
+
+
+expectBookmarksJson : (Result GetBookmarksResult a -> msg) -> Decoder a -> Expect msg
+expectBookmarksJson toMsg decoder =
+    Http.expectStringResponse toMsg <|
+        \response ->
+            case response of
+                Http.BadUrl_ url ->
+                    Err (BadUrl url)
+
+                Http.Timeout_ ->
+                    Err Timeout
+
+                Http.NetworkError_ ->
+                    Err NetworkError
+
+                Http.BadStatus_ metadata body ->
+                    Err (BadStatus metadata)
+
+                Http.GoodStatus_ metadata body ->
+                    case Json.Decode.decodeString decoder body of
+                        Ok value ->
+                            Ok value
+
+                        Err err ->
+                            Err (BadContents metadata (Json.Decode.errorToString err))
 
 
 bookmarkListDecoder : Decoder (List Bookmark)
