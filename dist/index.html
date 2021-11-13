@@ -9,6 +9,7 @@
         <div id="bookmarks"></div>
         <script>
             var app = Elm.Main.init({
+                          flags: location.href,
                           node: document.getElementById('bookmarks')
                       });
         </script>

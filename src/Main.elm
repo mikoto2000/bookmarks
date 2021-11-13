@@ -4,9 +4,12 @@ import Browser
 import Html exposing (Html, a, button, div, li, p, pre, text, ul)
 import Html.Attributes exposing (href, id)
 import Http exposing (Expect, Metadata)
-import Json.Decode exposing (Decoder, field, list, map2, string)
+import Json.Decode exposing (Decoder, field, list, map2)
 import List
 import String
+import Url
+import Url.Parser exposing ((<?>), parse, query)
+import Url.Parser.Query as Query exposing (Parser)
 
 
 main =
@@ -18,7 +21,7 @@ main =
 
 
 type alias Model =
-    { bookmarks : List Bookmark, infomation : String }
+    { user : String, bookmarks : List Bookmark, infomation : String }
 
 
 type alias Bookmark =
@@ -47,9 +50,25 @@ type Msg
 -- INIT
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( Model [] infomation_loading, getBookmarks )
+init : String -> ( Model, Cmd Msg )
+init url =
+    let
+        user =
+            extractUserFromUrlString url
+    in
+    ( Model user [] infomation_loading
+    , getBookmarksIfPresentsUser user
+    )
+
+
+getBookmarksIfPresentsUser : String -> Cmd Msg
+getBookmarksIfPresentsUser user =
+    case user of
+        "" ->
+            Cmd.none
+
+        default ->
+            getBookmarks user
 
 
 
@@ -90,9 +109,17 @@ subscriptions model =
 
 
 view model =
+    let
+        infomation =
+            if model.user == "" then
+                "ユーザーが指定されていません。クエリ文字列でユーザーを指定してください。\n例： user=mikoto2000"
+
+            else
+                model.infomation
+    in
     div []
         [ div []
-            [ pre [ id "infomation" ] [ text model.infomation ]
+            [ pre [ id "infomation" ] [ text infomation ]
             , div [ id "bookmarks" ]
                 [ ul []
                     (List.map to_anchor model.bookmarks)
@@ -107,13 +134,66 @@ to_anchor bookmark =
 
 
 
+-- Query
+
+
+{-| URL 文字列からユーザー名を抽出する。
+-}
+extractUserFromUrlString : String -> String
+extractUserFromUrlString url =
+    Url.fromString url
+        |> normalizePath
+        |> Maybe.andThen (parse (query queryParser))
+        |> extractUserFromParseResult
+
+
+{-| クエリ文字列取得時に、パスに関係なくパースできるようにするためのハックを行う。
+
+    See: <https://github.com/elm/url/issues/17#issuecomment-503630042>
+
+-}
+normalizePath : Maybe Url.Url -> Maybe Url.Url
+normalizePath url =
+    case url of
+        Nothing ->
+            Nothing
+
+        Just e ->
+            Maybe.Just { e | path = "" }
+
+
+{-| クエリ文字列から `user` パラメーターを抽出するパーサー。
+-}
+queryParser : Parser (Maybe String)
+queryParser =
+    Query.string "user"
+
+
+{-| クエリ文字列のパース結果からユーザー名を抽出する。
+-}
+extractUserFromParseResult : Maybe (Maybe String) -> String
+extractUserFromParseResult parseResult =
+    case parseResult of
+        Nothing ->
+            ""
+
+        Just userResult ->
+            case userResult of
+                Nothing ->
+                    ""
+
+                Just user ->
+                    user
+
+
+
 -- HTTP
 
 
-getBookmarks : Cmd Msg
-getBookmarks =
+getBookmarks : String -> Cmd Msg
+getBookmarks user =
     Http.get
-        { url = "./users/mikoto2000.json"
+        { url = "./users/" ++ user ++ ".json"
         , expect = expectBookmarksJson GotBookmarks bookmarkListDecoder
         }
 
@@ -152,8 +232,8 @@ bookmarkListDecoder =
 bookmarkDecoder : Decoder Bookmark
 bookmarkDecoder =
     map2 Bookmark
-        (field "title" string)
-        (field "url" string)
+        (field "title" Json.Decode.string)
+        (field "url" Json.Decode.string)
 
 
 
