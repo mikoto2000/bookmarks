@@ -20,10 +20,7 @@ docker run -it --rm -v "$(pwd):/local" openapitools/openapi-generator-cli genera
 ### Copy REST Client and build application
 
 ```sh
-npx elm-format --yes src/Main.elm
-cp -r ./openapi/dest/src/Api.elm ./openapi/dest/src/Api/ ./src
-npx elm make --output=dist/bookmarks.js src/Main.elm
-cp -r src/users ./dist
+docker run -it --rm -v "$(pwd):/work" --workdir "/work" node:17 npm run build
 ```
 
 ## Run application on local
@@ -31,7 +28,7 @@ cp -r src/users ./dist
 Use [http-party/http-server: a simple zero-configuration command-line http server](https://github.com/http-party/http-server).
 
 ```sh
-npx http-server -p 8080 ./dist
+docker run -it --rm -v "$(pwd):/work" --workdir "/work" -p "8080:8080" node:17 npm run run -- -p 8080
 ```
 
 ## Edit OpenAPI
@@ -64,10 +61,12 @@ openapi2jsonschema -o ./openapi/schemas ./openapi/openapi.yaml
         - [x] : エラー内容表示
 - [ ] : ユーザー毎にブックマークリストファイルを作れるようにする
     - [x] : とりあえず実装
-    - [ ] : OpenAPI Generator での実装に差し替え
+    - [x] : OpenAPI Generator での実装に差し替え
     - [ ] : エンドポイントホストを指定できるようにする
 - [ ] : 見た目改善
 - [ ] : テスト
+- [ ] : openapi2jsonschema を Docker コンテナ化
+- [x] : ビルドスクリプト
 - [ ] : デプロイスクリプト
 - [ ] : リファクタリング
     - [ ] : エラー通知をフォーマット文字列でやる
