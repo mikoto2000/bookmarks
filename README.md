@@ -19,8 +19,20 @@ docker run -it --rm -v "$(pwd):/local" openapitools/openapi-generator-cli genera
 
 ### Copy REST Client and build application
 
+#### For development
+
+エンドポイントのベースパスを `//localhost:8080` としてビルドする。
+
 ```sh
 docker run -it --rm -v "$(pwd):/work" --workdir "/work" node:17 npm run build
+```
+
+#### For production example
+
+`npm run build` の第一引数に、エンドポイントのベースパスを設定する。
+
+```sh
+docker run -it --rm -v "$(pwd):/work" --workdir "/work" node:17 npm run build -- //mikoto2000.github.io
 ```
 
 ## Run application on local
@@ -56,13 +68,13 @@ openapi2jsonschema -o ./openapi/schemas ./openapi/openapi.yaml
     - [x] : Http, Json モジュールでファイルを読み込む
     - [x] : ブックマークリスト取得の API 定義
     - [x] : ブックマークリスト取得のスキーマ定義
-    - [x] : エラー通知
+    - [ ] : エラー通知
         - [x] : エラーだということを表示
-        - [x] : エラー内容表示
-- [ ] : ユーザー毎にブックマークリストファイルを作れるようにする
+        - [ ] : エラー内容表示(対象リソースの URL を表示)
+- [x] : ユーザー毎にブックマークリストファイルを作れるようにする
     - [x] : とりあえず実装
     - [x] : OpenAPI Generator での実装に差し替え
-    - [ ] : エンドポイントホストを指定できるようにする
+    - [x] : エンドポイントホストを指定できるようにする
 - [ ] : 見た目改善
 - [ ] : テスト
 - [ ] : openapi2jsonschema を Docker コンテナ化

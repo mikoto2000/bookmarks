@@ -27,6 +27,10 @@ type alias Model =
     { user : String, bookmarks : List Bookmark, infomation : String }
 
 
+type alias Flags =
+    { locationUrl : String, endpointBasePath : String }
+
+
 
 -- メッセージ定義
 
@@ -40,24 +44,27 @@ type Msg
 
 
 init : String -> ( Model, Cmd Msg )
-init url =
+init rawFlags =
     let
+        flags =
+            expectFlags <| Json.Decode.decodeString flagsDecoder rawFlags
+
         user =
-            extractUserFromUrlString url
+            extractUserFromUrlString flags.locationUrl
     in
     ( Model user [] infomation_loading
-    , getBookmarksIfPresentsUser user
+    , getBookmarksIfPresentsUser user flags.endpointBasePath
     )
 
 
-getBookmarksIfPresentsUser : String -> Cmd Msg
-getBookmarksIfPresentsUser user =
+getBookmarksIfPresentsUser : String -> String -> Cmd Msg
+getBookmarksIfPresentsUser user endpointBasePath =
     case user of
         "" ->
             Cmd.none
 
         default ->
-            getBookmarks user
+            getBookmarks user endpointBasePath
 
 
 
@@ -179,9 +186,9 @@ extractUserFromParseResult parseResult =
 -- HTTP
 
 
-getBookmarks : String -> Cmd Msg
-getBookmarks user =
-    Api.send GotBookmarks (Api.withBasePath "//localhost:8080" (Api.Request.Bookmarks.getBookmarks <| user))
+getBookmarks : String -> String -> Cmd Msg
+getBookmarks user endpointBasePath =
+    Api.send GotBookmarks (Api.withBasePath endpointBasePath (Api.Request.Bookmarks.getBookmarks <| user))
 
 
 
@@ -194,3 +201,24 @@ infomation_loading =
 
 infomation_json_load_error =
     "JSON の読み込みに失敗しました"
+
+
+
+-- Flags
+
+
+expectFlags : Result Json.Decode.Error Flags -> Flags
+expectFlags flagsDecodeResult =
+    case flagsDecodeResult of
+        Ok value ->
+            value
+
+        Err _ ->
+            Flags "http://localhost:8080" "localhost:8080"
+
+
+flagsDecoder : Decoder Flags
+flagsDecoder =
+    map2 Flags
+        (field "locationUrl" Json.Decode.string)
+        (field "endpointBasePath" Json.Decode.string)
