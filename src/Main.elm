@@ -1,5 +1,8 @@
 module Main exposing (main, update, view)
 
+import Api
+import Api.Data exposing (Bookmark)
+import Api.Request.Bookmarks
 import Browser
 import Html exposing (Html, a, button, div, li, p, pre, text, ul)
 import Html.Attributes exposing (href, id)
@@ -9,7 +12,7 @@ import List
 import String
 import Url
 import Url.Parser exposing ((<?>), parse, query)
-import Url.Parser.Query as Query exposing (Parser)
+import Url.Parser.Query as Query
 
 
 main =
@@ -24,26 +27,12 @@ type alias Model =
     { user : String, bookmarks : List Bookmark, infomation : String }
 
 
-type alias Bookmark =
-    { title : String
-    , url : String
-    }
-
-
-type GetBookmarksResult
-    = BadUrl String
-    | Timeout
-    | NetworkError
-    | BadStatus Metadata
-    | BadContents Metadata String
-
-
 
 -- メッセージ定義
 
 
 type Msg
-    = GotBookmarks (Result GetBookmarksResult (List Bookmark))
+    = GotBookmarks (Result Http.Error (List Bookmark))
 
 
 
@@ -84,20 +73,20 @@ update msg model =
 
                 Err error ->
                     case error of
-                        BadUrl url ->
+                        Http.BadUrl url ->
                             ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nBadUrl: " ++ url }, Cmd.none )
 
-                        Timeout ->
+                        Http.Timeout ->
                             ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nTimeout" }, Cmd.none )
 
-                        NetworkError ->
+                        Http.NetworkError ->
                             ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nNetworkError" }, Cmd.none )
 
-                        BadStatus metadata ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nURL: " ++ metadata.url ++ "\nStatus: " ++ String.fromInt metadata.statusCode }, Cmd.none )
+                        Http.BadStatus code ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nPath: ./users/" ++ model.user ++ "\nStatus: " ++ String.fromInt code }, Cmd.none )
 
-                        BadContents metadata body ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\n" ++ body }, Cmd.none )
+                        Http.BadBody body ->
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nPath: ./users/" ++ model.user ++ "\n" ++ body }, Cmd.none )
 
 
 
@@ -130,7 +119,7 @@ view model =
 
 to_anchor bookmark =
     li []
-        [ a [ href bookmark.url ] [ text bookmark.title ] ]
+        [ a [ href bookmark.url ] [ text (Maybe.withDefault bookmark.url bookmark.title) ] ]
 
 
 
@@ -164,7 +153,7 @@ normalizePath url =
 
 {-| クエリ文字列から `user` パラメーターを抽出するパーサー。
 -}
-queryParser : Parser (Maybe String)
+queryParser : Query.Parser (Maybe String)
 queryParser =
     Query.string "user"
 
@@ -192,48 +181,7 @@ extractUserFromParseResult parseResult =
 
 getBookmarks : String -> Cmd Msg
 getBookmarks user =
-    Http.get
-        { url = "./users/" ++ user ++ ".json"
-        , expect = expectBookmarksJson GotBookmarks bookmarkListDecoder
-        }
-
-
-expectBookmarksJson : (Result GetBookmarksResult a -> msg) -> Decoder a -> Expect msg
-expectBookmarksJson toMsg decoder =
-    Http.expectStringResponse toMsg <|
-        \response ->
-            case response of
-                Http.BadUrl_ url ->
-                    Err (BadUrl url)
-
-                Http.Timeout_ ->
-                    Err Timeout
-
-                Http.NetworkError_ ->
-                    Err NetworkError
-
-                Http.BadStatus_ metadata body ->
-                    Err (BadStatus metadata)
-
-                Http.GoodStatus_ metadata body ->
-                    case Json.Decode.decodeString decoder body of
-                        Ok value ->
-                            Ok value
-
-                        Err err ->
-                            Err (BadContents metadata (Json.Decode.errorToString err))
-
-
-bookmarkListDecoder : Decoder (List Bookmark)
-bookmarkListDecoder =
-    Json.Decode.list bookmarkDecoder
-
-
-bookmarkDecoder : Decoder Bookmark
-bookmarkDecoder =
-    map2 Bookmark
-        (field "title" Json.Decode.string)
-        (field "url" Json.Decode.string)
+    Api.send GotBookmarks (Api.withBasePath "//localhost:8080" (Api.Request.Bookmarks.getBookmarks <| user))
 
 
 

@@ -1,6 +1,10 @@
 node_modules/
 elm-stuff/
 
+src/Api.elm
+src/Api/
+
+openapi/dest/
 openapi/schemas/
 
 dist/bookmarks.js

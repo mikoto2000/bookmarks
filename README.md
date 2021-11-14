@@ -11,8 +11,17 @@ npm install
 
 ## Build
 
+### Generate REST Client
+
+```sh
+docker run -it --rm -v "$(pwd):/local" openapitools/openapi-generator-cli generate -i /local/openapi/openapi.yaml -g elm -o /local/openapi/dest
+```
+
+### Copy REST Client and build application
+
 ```sh
 npx elm-format --yes src/Main.elm
+cp -r ./openapi/dest/src/Api.elm ./openapi/dest/src/Api/ ./src
 npx elm make --output=dist/bookmarks.js src/Main.elm
 cp -r src/users ./dist
 ```

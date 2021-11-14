@@ -19,6 +19,7 @@ paths:
     get:
       tags:
         - bookmarks
+      operationId: getBookmarks
       summary: 対象ユーザーのすべてのブックマークを取得
       description: ブックマークのリストを返却
       parameters: 
