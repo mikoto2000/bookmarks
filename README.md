@@ -57,7 +57,7 @@ docker run -it --rm -p "8081:8080" -v "$(pwd):/work" -e SWAGGER_FILE=/work/opena
 Use [instrumenta/openapi2jsonschema: Convert OpenAPI definitions into JSON schemas for all types in the API](https://github.com/instrumenta/openapi2jsonschema).
 
 ```sh
-openapi2jsonschema -o ./openapi/schemas ./openapi/openapi.yaml
+docker run -it --rm -v "$(pwd):/work" --workdir "/work" mikoto2000/openapi2jsonschema -o ./openapi/schemas ./openapi/openapi.yaml
 ```
 
 
@@ -77,7 +77,7 @@ openapi2jsonschema -o ./openapi/schemas ./openapi/openapi.yaml
     - [x] : エンドポイントホストを指定できるようにする
 - [ ] : 見た目改善
 - [ ] : テスト
-- [ ] : openapi2jsonschema を Docker コンテナ化
+- [x] : openapi2jsonschema を Docker コンテナ化
 - [x] : ビルドスクリプト
 - [ ] : デプロイスクリプト
 - [ ] : リファクタリング
