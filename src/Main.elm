@@ -1,4 +1,4 @@
-module Main exposing (main, update, view)
+module Main exposing (User(..), extractUserFromUrlString, main, update, view)
 
 import Api
 import Api.Data exposing (Bookmark)
@@ -24,11 +24,17 @@ main =
 
 
 type alias Model =
-    { user : String, bookmarks : List Bookmark, infomation : String }
+    { user : User, bookmarks : List Bookmark, infomation : String }
 
 
 type alias Flags =
     { locationUrl : String, endpointBasePath : String }
+
+
+type User
+    = OnceUser String
+    | NothingUser
+    | MultipleUser
 
 
 
@@ -57,14 +63,14 @@ init rawFlags =
     )
 
 
-getBookmarksIfPresentsUser : String -> String -> Cmd Msg
+getBookmarksIfPresentsUser : User -> String -> Cmd Msg
 getBookmarksIfPresentsUser user endpointBasePath =
     case user of
-        "" ->
-            Cmd.none
+        OnceUser name ->
+            getBookmarks name endpointBasePath
 
         default ->
-            getBookmarks user endpointBasePath
+            Cmd.none
 
 
 
@@ -72,6 +78,15 @@ getBookmarksIfPresentsUser user endpointBasePath =
 
 
 update msg model =
+    let
+        userName =
+            case model.user of
+                OnceUser name ->
+                    name
+
+                default ->
+                    ""
+    in
     case msg of
         GotBookmarks result ->
             case result of
@@ -90,10 +105,10 @@ update msg model =
                             ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nNetworkError" }, Cmd.none )
 
                         Http.BadStatus code ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nPath: ./users/" ++ model.user ++ "\nStatus: " ++ String.fromInt code }, Cmd.none )
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nPath: ./users/" }, Cmd.none )
 
                         Http.BadBody body ->
-                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nPath: ./users/" ++ model.user ++ "\n" ++ body }, Cmd.none )
+                            ( { model | infomation = "ブックマークリストファイルのダウンロードに失敗しました。\nPath: ./users/" }, Cmd.none )
 
 
 
@@ -107,11 +122,15 @@ subscriptions model =
 view model =
     let
         infomation =
-            if model.user == "" then
-                "ユーザーが指定されていません。クエリ文字列でユーザーを指定してください。\n例： user=mikoto2000"
+            case model.user of
+                NothingUser ->
+                    "ユーザーが指定されていません。クエリ文字列でユーザーを指定してください。\n例： user=mikoto2000"
 
-            else
-                model.infomation
+                MultipleUser ->
+                    "ユーザーが複数指定されています。クエリ文字列でユーザーを指定してください。\n例： user=mikoto2000"
+
+                OnceUser name ->
+                    model.infomation
     in
     div []
         [ div []
@@ -135,7 +154,7 @@ to_anchor bookmark =
 
 {-| URL 文字列からユーザー名を抽出する。
 -}
-extractUserFromUrlString : String -> String
+extractUserFromUrlString : String -> User
 extractUserFromUrlString url =
     Url.fromString url
         |> normalizePath
@@ -160,26 +179,34 @@ normalizePath url =
 
 {-| クエリ文字列から `user` パラメーターを抽出するパーサー。
 -}
-queryParser : Query.Parser (Maybe String)
+queryParser : Query.Parser (List String)
 queryParser =
-    Query.string "user"
+    Query.custom "user" (List.filter isNotEmpty)
+
+
+isNotEmpty : String -> Bool
+isNotEmpty string =
+    not <| String.isEmpty string
 
 
 {-| クエリ文字列のパース結果からユーザー名を抽出する。
 -}
-extractUserFromParseResult : Maybe (Maybe String) -> String
+extractUserFromParseResult : Maybe (List String) -> User
 extractUserFromParseResult parseResult =
     case parseResult of
         Nothing ->
-            ""
+            NothingUser
 
         Just userResult ->
-            case userResult of
-                Nothing ->
-                    ""
+            case List.length userResult of
+                0 ->
+                    NothingUser
 
-                Just user ->
-                    user
+                1 ->
+                    OnceUser <| Maybe.withDefault "" (List.head userResult)
+
+                default ->
+                    MultipleUser
 
 
 
