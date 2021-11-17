@@ -35,6 +35,13 @@ docker run -it --rm -v "$(pwd):/work" --workdir "/work" node:17 npm run build
 docker run -it --rm -v "$(pwd):/work" --workdir "/work" node:17 npm run build -- //mikoto2000.github.io
 ```
 
+## Test
+
+```sh
+docker run -it --rm -v "$(pwd):/work" --workdir "/work" node:17 npm run test
+```
+
+
 ## Run application on local
 
 Use [http-party/http-server: a simple zero-configuration command-line http server](https://github.com/http-party/http-server).
@@ -77,6 +84,7 @@ docker run -it --rm -v "$(pwd):/work" --workdir "/work" mikoto2000/openapi2jsons
     - [x] : エンドポイントホストを指定できるようにする
 - [ ] : 見た目改善
 - [ ] : テスト
+    - [x] : extractUserFromUrlString
 - [x] : openapi2jsonschema を Docker コンテナ化
 - [x] : ビルドスクリプト
 - [ ] : デプロイスクリプト
