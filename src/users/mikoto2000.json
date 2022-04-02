@@ -56,6 +56,18 @@
         "url": "https://www.toodledo.com/tasks"
     },
     {
+        "title": "Azure Portal",
+        "url": "https://portal.azure.com/#home"
+    },
+    {
+        "title": "AWS マネジメントコンソール",
+        "url": "https://console.aws.amazon.com/?nc2=h_m_mc"
+    },
+    {
+        "title": "Oracle Cloud",
+        "url": "https://www.oracle.com/jp/cloud/sign-in.html"
+    },
+    {
         "title": "mikoto2000 - GitHub",
         "url": "https://github.com/mikoto2000"
     },
