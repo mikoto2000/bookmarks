@@ -1,0 +1,95 @@
+[
+    {
+        "title": "Google",
+        "url": "https://www.google.com"
+    },
+    {
+        "title": "TweetDeck",
+        "url": "https://tweetdeck.twitter.com/"
+    },
+    {
+        "title": "Google Analytics",
+        "url": "https://analytics.google.com"
+    },
+    {
+        "title": "IFTTT",
+        "url": "https://ifttt.com/explore"
+    },
+    {
+        "title": "Feedly",
+        "url": "https://feedly.com/i/my"
+    },
+    {
+        "title": "PlayerFM",
+        "url": "https://player.fm"
+    },
+    {
+        "title": "Azure DevOps",
+        "url": "https://dev.azure.com"
+    },
+    {
+        "title": "Office 365",
+        "url": "https://www.office.com"
+    },
+    {
+        "title": "Blogger",
+        "url": "https://www.blogger.com"
+    },
+    {
+        "title": "Booklog",
+        "url": "https://booklog.jp/home"
+    },
+    {
+        "title": "Gmail",
+        "url": "https://mail.google.com"
+    },
+    {
+        "title": "Google Search Console",
+        "url": "https://search.google.com/search-console"
+    },
+    {
+        "title": "Evernote",
+        "url": "https://www.evernote.com/Login.action"
+    },
+    {
+        "title": "Toodledo",
+        "url": "https://www.toodledo.com/tasks"
+    },
+    {
+        "title": "Azure Portal",
+        "url": "https://portal.azure.com/#home"
+    },
+    {
+        "title": "AWS マネジメントコンソール",
+        "url": "https://console.aws.amazon.com/?nc2=h_m_mc"
+    },
+    {
+        "title": "Oracle Cloud",
+        "url": "https://www.oracle.com/jp/cloud/sign-in.html"
+    },
+    {
+        "title": "mikoto2000 - GitHub",
+        "url": "https://github.com/mikoto2000"
+    },
+    {
+        "title": "Pocket",
+        "url": "https://getpocket.com/my-list"
+    },
+    {
+        "title": "Twitter",
+        "url": "https://twitter.com/home"
+    },
+    {
+        "title": "Twitter アナリティクス",
+        "url": "https://analytics.twitter.com"
+    },
+    {
+        "title": "Amazon",
+        "url": "https://www.amazon.co.jp/"
+    },
+    {
+        "title": "ニコニコ",
+        "url": "https://www.nicovideo.jp/"
+    }
+]
+
