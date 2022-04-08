@@ -4,6 +4,10 @@
         "url": "https://www.google.com"
     },
     {
+        "title": "Google ニュース - おすすめ",
+        "url": "https://news.google.com/foryou?hl=ja&gl=JP&ceid=JP%3Aja"
+    },
+    {
         "title": "TweetDeck",
         "url": "https://tweetdeck.twitter.com/"
     },
@@ -30,6 +34,10 @@
     {
         "title": "Office 365",
         "url": "https://www.office.com"
+    },
+    {
+        "title": "YouTube",
+        "url": "https://www.youtube.com/"
     },
     {
         "title": "Blogger",
