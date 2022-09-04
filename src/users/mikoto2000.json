@@ -3,6 +3,9 @@
         "title": "Google",
         "url": "https://www.google.com"
     },
+        "title": "Google カレンダー",
+        "url": "https://calendar.google.com/calendar/u/0/r"
+    },
     {
         "title": "Google ニュース - おすすめ",
         "url": "https://news.google.com/foryou?hl=ja&gl=JP&ceid=JP%3Aja"
