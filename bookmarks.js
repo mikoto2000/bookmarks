@@ -6305,12 +6305,6 @@ var $author$project$Api$interpolatePath = F2(
 				'/',
 				A3($elm$core$List$foldl, interpolate, rawPath, pathParams)));
 	});
-var $elm$http$Http$jsonBody = function (value) {
-	return A2(
-		_Http_pair,
-		'application/json',
-		A2($elm$json$Json$Encode$encode, 0, value));
-};
 var $elm$url$Url$Builder$QueryParameter = F2(
 	function (a, b) {
 		return {$: 'QueryParameter', a: a, b: b};
@@ -6337,10 +6331,7 @@ var $author$project$Api$request = F7(
 		return $author$project$Api$Request(
 			{
 				basePath: 'https://mikoto2000.github.io/bookmarks',
-				body: A2(
-					$elm$core$Maybe$withDefault,
-					$elm$http$Http$emptyBody,
-					A2($elm$core$Maybe$map, $elm$http$Http$jsonBody, body)),
+				body: A2($elm$core$Maybe$withDefault, $elm$http$Http$emptyBody, body),
 				decoder: decoder,
 				headers: $author$project$Api$headers(headerParams),
 				method: method,
@@ -6366,25 +6357,6 @@ var $author$project$Api$Request$Bookmarks$getBookmarks = function (user_path) {
 		$elm$core$Maybe$Nothing,
 		$elm$json$Json$Decode$list($author$project$Api$Data$bookmarkDecoder));
 };
-var $elm$url$Url$Builder$toQueryPair = function (_v0) {
-	var key = _v0.a;
-	var value = _v0.b;
-	return key + ('=' + value);
-};
-var $elm$url$Url$Builder$toQuery = function (parameters) {
-	if (!parameters.b) {
-		return '';
-	} else {
-		return '?' + A2(
-			$elm$core$String$join,
-			'&',
-			A2($elm$core$List$map, $elm$url$Url$Builder$toQueryPair, parameters));
-	}
-};
-var $elm$url$Url$Builder$crossOrigin = F3(
-	function (prePath, pathSegments, parameters) {
-		return prePath + ('/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters)));
-	});
 var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
@@ -6477,6 +6449,25 @@ var $author$project$Api$expectJson = F3(
 				$elm$core$Basics$composeL,
 				$elm$core$Result$mapError(mapError),
 				$author$project$Api$decodeResponse(decoder)));
+	});
+var $elm$url$Url$Builder$toQueryPair = function (_v0) {
+	var key = _v0.a;
+	var value = _v0.b;
+	return key + ('=' + value);
+};
+var $elm$url$Url$Builder$toQuery = function (parameters) {
+	if (!parameters.b) {
+		return '';
+	} else {
+		return '?' + A2(
+			$elm$core$String$join,
+			'&',
+			A2($elm$core$List$map, $elm$url$Url$Builder$toQueryPair, parameters));
+	}
+};
+var $elm$url$Url$Builder$crossOrigin = F3(
+	function (prePath, pathSegments, parameters) {
+		return prePath + ('/' + (A2($elm$core$String$join, '/', pathSegments) + $elm$url$Url$Builder$toQuery(parameters)));
 	});
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
@@ -6628,19 +6619,26 @@ var $elm$http$Http$request = function (r) {
 		$elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
-var $author$project$Api$sendWithCustomError = F3(
-	function (mapError, toMsg, _v0) {
+var $author$project$Api$sendWithCustomExpect = F2(
+	function (expect, _v0) {
 		var req = _v0.a;
 		return $elm$http$Http$request(
 			{
 				body: req.body,
-				expect: A3($author$project$Api$expectJson, mapError, toMsg, req.decoder),
+				expect: expect(req.decoder),
 				headers: req.headers,
 				method: req.method,
 				timeout: req.timeout,
 				tracker: req.tracker,
 				url: A3($elm$url$Url$Builder$crossOrigin, req.basePath, req.pathParams, req.queryParams)
 			});
+	});
+var $author$project$Api$sendWithCustomError = F3(
+	function (mapError, toMsg, req) {
+		return A2(
+			$author$project$Api$sendWithCustomExpect,
+			A2($author$project$Api$expectJson, mapError, toMsg),
+			req);
 	});
 var $author$project$Api$send = F2(
 	function (toMsg, req) {
