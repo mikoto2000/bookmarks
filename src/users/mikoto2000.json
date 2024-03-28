@@ -122,6 +122,26 @@
     {
         "title": "Fitbit",
         "url": "https://www.fitbit.com/"
+    },
+    {
+        "title": "Udemy",
+        "url": "https://www.udemy.com/"
+    },
+    {
+        "title": "埼玉りそな銀行",
+        "url": "https://www.saitamaresona.co.jp/"
+    },
+    {
+        "title": "楽天銀行",
+        "url": "https://www.rakuten-bank.co.jp/"
+    },
+    {
+        "title": "楽天証券",
+        "url": "https://member.rakuten-sec.co.jp/"
+    },
+    {
+        "title": "楽天カード",
+        "url": "https://www.rakuten-card.co.jp/"
     }
 ]
 
