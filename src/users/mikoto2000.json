@@ -72,10 +72,6 @@
         "url": "https://www.evernote.com/Login.action"
     },
     {
-        "title": "Toodledo",
-        "url": "https://www.toodledo.com/tasks"
-    },
-    {
         "title": "Azure Portal",
         "url": "https://portal.azure.com/#home"
     },
@@ -110,6 +106,14 @@
     {
         "title": "Facebook",
         "url": "https://www.facebook.com/"
+    },
+    {
+        "title": "Vim 駅伝",
+        "url": "https://vim-jp.org/ekiden/"
+    },
+    {
+        "title": "vim-jp Slack",
+        "url": "https://app.slack.com/client/T03C4RC8V"
     },
     {
         "title": "Amazon",
