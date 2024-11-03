@@ -12,16 +12,8 @@
         "url": "https://news.google.com/foryou?hl=ja&gl=JP&ceid=JP%3Aja"
     },
     {
-        "title": "TweetDeck",
-        "url": "https://tweetdeck.twitter.com/"
-    },
-    {
         "title": "Google Analytics",
         "url": "https://analytics.google.com"
-    },
-    {
-        "title": "IFTTT",
-        "url": "https://ifttt.com/explore"
     },
     {
         "title": "Feedly",
@@ -30,10 +22,6 @@
     {
         "title": "Qiita",
         "url": "https://qiita.com/"
-    },
-    {
-        "title": "PlayerFM",
-        "url": "https://player.fm"
     },
     {
         "title": "Azure DevOps",
@@ -96,10 +84,6 @@
         "url": "https://twitter.com/home"
     },
     {
-        "title": "Twitter アナリティクス",
-        "url": "https://analytics.twitter.com"
-    },
-    {
         "title": "Bluesky",
         "url": "https://bsky.app/"
     },
@@ -126,6 +110,10 @@
     {
         "title": "AtCoder",
         "url": "https://atcoder.jp/home"
+    },
+    {
+        "title": "AtCoder データセット(？)",
+        "url": "https://www.dropbox.com/sh/nx3tnilzqz7df8a/AAAYlTq2tiEHl5hsESw6-yfLa?e=2&dl=0"
     },
     {
         "title": "AIZU ONLINE JUDGE",
