@@ -4,6 +4,22 @@
         "url": "https://www.google.com"
     },
     {
+        "title": "ChatGPT",
+        "url": "https://chat.openai.com/?model=gpt-4"
+    },
+    {
+        "title": "Gemini",
+        "url": "https://gemini.google.com/app"
+    },
+    {
+        "title": "Google 翻訳",
+        "url": "https://translate.google.co.jp/?hl=ja"
+    },
+    {
+        "title": "DeepL",
+        "url": "https://www.deepl.com/ja/translator"
+    },
+    {
         "title": "Google カレンダー",
         "url": "https://calendar.google.com/calendar/u/0/r"
     },
@@ -22,6 +38,10 @@
     {
         "title": "Qiita",
         "url": "https://qiita.com/"
+    },
+    {
+        "title": "r/vim - Reddit",
+        "url": "https://www.reddit.com/r/vim/"
     },
     {
         "title": "Azure DevOps",
@@ -98,6 +118,10 @@
     {
         "title": "vim-jp Slack",
         "url": "https://app.slack.com/client/T03C4RC8V"
+    },
+    {
+        "title": "Vimrc 読書会",
+        "url": "http://vim-jp.org/reading-vimrc/"
     },
     {
         "title": "Amazon",
