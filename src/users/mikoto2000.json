@@ -4,6 +4,10 @@
         "url": "https://www.google.com"
     },
     {
+        "title": "Google NotebookLM",
+        "url": "https://notebooklm.google.com/"
+    },
+    {
         "title": "ChatGPT",
         "url": "https://chat.openai.com/?model=gpt-4"
     },
