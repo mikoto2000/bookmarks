@@ -92,6 +92,14 @@
         "url": "https://console.aws.amazon.com/?nc2=h_m_mc"
     },
     {
+        "title": "Supabase",
+        "url": "https://supabase.com/dashboard"
+    },
+    {
+        "title": "Firebase",
+        "url": "https://console.firebase.google.com"
+    },
+    {
         "title": "Oracle Cloud",
         "url": "https://www.oracle.com/jp/cloud/sign-in.html"
     },
