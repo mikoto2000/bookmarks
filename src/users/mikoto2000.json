@@ -96,6 +96,10 @@
         "url": "https://console.aws.amazon.com/?nc2=h_m_mc"
     },
     {
+        "title": "Google Cloud Console",
+        "url": "https://console.cloud.google.com/welcome"
+    },
+    {
         "title": "Supabase",
         "url": "https://supabase.com/dashboard"
     },
